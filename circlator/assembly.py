@@ -6,7 +6,7 @@ class Error (Exception): pass
 class Assembly:
     def __init__(self, path, assembler):
         '''path can be a directory or a filename. If directory, assumes the name of a SPAdes
-           or Canu (with files contigs.fasta and contigs.gfa files)
+           or Canu (with files assembly.fasta and assembly_graph.gfa files)
            output directory. If a file, assumes it is a fasta file of contigs'''
         self.assembler = assembler
 
@@ -38,13 +38,13 @@ class Assembly:
         if self.assembler_dir is None:
             return
 
-        contigs_fasta = os.path.join(self.assembler_dir, 'contigs.fasta')
+        contigs_fasta = os.path.join(self.assembler_dir, 'assembly.fasta')
         self.contigs_fasta = self._file_exists(contigs_fasta)
 
         if self.contigs_fasta is None:
             raise Error('Error finding contigs file: ' + contigs_fasta)
 
-        self.contigs_gfa = self._file_exists(os.path.join(self.assembler_dir, 'contigs.gfa'))
+        self.contigs_gfa = self._file_exists(os.path.join(self.assembler_dir, 'assembly_graph.gfa'))
         self.contigs_fastg = self._file_exists(os.path.join(self.assembler_dir, 'contigs.fastg'))
         self.contigs_paths = self._file_exists(os.path.join(self.assembler_dir, 'contigs.paths'))
         self.assembly_graph_fastg = self._file_exists(os.path.join(self.assembler_dir, 'assembly_graph.fastg'))

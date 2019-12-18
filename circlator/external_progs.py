@@ -10,7 +10,7 @@ class Error (Exception): pass
 prog_to_env_var = {
     'samtools': 'CIRCLATOR_SAMTOOLS',
     'spades': 'CIRCLATOR_SPADES',
-    'canu': 'CIRCLATOR_CANU',
+    'flye': 'CIRCLATOR_FLYE',
 }
 
 prog_to_version_cmd = {
@@ -19,7 +19,7 @@ prog_to_version_cmd = {
     'prodigal': ('-v', re.compile(r'^Prodigal V([0-9\.]+):')),
     'samtools': ('', re.compile(r'Version: (\d+\.\d+[\.\d]*)')),
     'spades': ('-v', re.compile(r'v.?([0-9][0-9\.]+)')),
-    'canu': ('-version', re.compile(r'^Canu \D*([\d][\d\.]+)')),
+    'flye': ('-v', re.compile(r'([0-9\.]+)')),
 }
 
 min_versions = {
@@ -28,7 +28,7 @@ min_versions = {
     'prodigal': '2.6',
     'samtools': '0.1.19',
     'spades': '3.6.2', # this is the first version to support python3
-    'canu': '0.0',
+    'flye': '2.6',
 }
 
 
@@ -43,10 +43,10 @@ prog_name_to_default = {
     'prodigal': 'prodigal',
     'spades': 'spades.py',
     'samtools': 'samtools',
-    'canu': 'canu',
+    'flye': 'flye',
 }
 
-not_required = {'spades', 'canu'}
+not_required = {'spades', 'flye'}
 
 def handle_error(message, raise_error=True):
     if raise_error:

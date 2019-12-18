@@ -19,7 +19,7 @@ class Assembler:
       spades_use_first_success=False,
       assembler='spades',
       genomeSize=100000, # only matters for Canu if correcting reads (which we're not)
-      data_type='pacbio-corrected',
+      data_type='pacbio-raw',
     ):
         self.outdir = os.path.abspath(outdir)
         self.reads = os.path.abspath(reads)
@@ -37,8 +37,8 @@ class Assembler:
             self.spades_use_first_success = spades_use_first_success
             self.careful = careful
             self.only_assembler = only_assembler
-        elif self.assembler == 'canu':
-            self.canu = external_progs.make_and_check_prog('canu', verbose=self.verbose, required=True)
+        elif self.assembler == 'flye':
+            self.canu = external_progs.make_and_check_prog('flye', verbose=self.verbose, required=True)
             self.genomeSize=genomeSize
             self.data_type = data_type
         else:
@@ -82,13 +82,10 @@ class Assembler:
     def _make_canu_command(self, outdir, out_name):
         cmd = [
             self.canu.exe(),
-            '-useGrid=false',
-            'gnuplotTested=true',
-            '-assemble',
-            'genomeSize='+str(float(self.genomeSize)/1000000)+'m',
-            '-d', outdir,
-            '-p', out_name,
-            '-'+self.data_type,
+            '-t', str(self.threads),
+            '-g', str(float(self.genomeSize)/1000000)+'m',
+            '-o', outdir,
+            '--'+self.data_type,
             self.reads,
         ]
         return ' '.join(cmd)
@@ -161,12 +158,12 @@ class Assembler:
         cmd = self._make_canu_command(self.outdir,'canu')
         ok, errs = common.syscall(cmd, verbose=self.verbose, allow_fail=False)
         if not ok:
-            raise Error('Error running Canu.')
+            raise Error('Error running flye.')
 
-        original_contigs = os.path.join(self.outdir, 'canu.contigs.fasta')
+        original_contigs = os.path.join(self.outdir, 'assembly.fasta')
         renamed_contigs = os.path.join(self.outdir, 'contigs.fasta')
         Assembler._rename_canu_contigs(original_contigs, renamed_contigs)
-        original_gfa = os.path.join(self.outdir, 'canu.contigs.gfa')
+        original_gfa = os.path.join(self.outdir, 'assembly_graph.gfa')
         renamed_gfa = os.path.join(self.outdir, 'contigs.gfa')
         os.rename(original_gfa, renamed_gfa)
 
@@ -174,7 +171,7 @@ class Assembler:
     def run(self):
         if self.assembler == 'spades':
             self.run_spades(stop_at_first_success=self.spades_use_first_success)
-        elif self.assembler == 'canu':
+        elif self.assembler == 'flye':
             self.run_canu()
         else:
             raise Error('Unknown assembler: "' + self.assembler + '". cannot continue')

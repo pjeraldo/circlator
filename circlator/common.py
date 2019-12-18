@@ -4,8 +4,8 @@ import subprocess
 
 class Error (Exception): pass
 
-allowed_assemblers = ['canu', 'spades'] 
-allowed_data_types = ['pacbio-raw', 'pacbio-corrected', 'nanopore-raw', 'nanopore-corrected']
+allowed_assemblers = ['flye', 'spades']
+allowed_data_types = ['pacbio-raw', 'pacbio-corr', 'nano-raw', 'nano-corr']
 
 def syscall(cmd, allow_fail=False, verbose=False):
     if verbose:
