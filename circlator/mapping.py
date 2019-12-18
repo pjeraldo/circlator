@@ -28,6 +28,7 @@ def bwa_index(infile, outprefix=None, bwa=None, verbose=False):
 
     cmd = ' '.join([
         bwa.exe(),
+        '-x','map-pb',
         '-d', outprefix,
         infile
     ])
