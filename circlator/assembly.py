@@ -6,7 +6,7 @@ class Error (Exception): pass
 class Assembly:
     def __init__(self, path, assembler):
         '''path can be a directory or a filename. If directory, assumes the name of a SPAdes
-           or Canu (with files assembly.fasta and assembly_graph.gfa files)
+           or flye (with files assembly.fasta and assembly_graph.gfa files)
            output directory. If a file, assumes it is a fasta file of contigs'''
         self.assembler = assembler
 
@@ -61,9 +61,9 @@ class Assembly:
                      '    contigs.paths and assembly_graph.fastg (SPAdes >3.6.1)'
                 ])
                 raise Error(error_message)
-        elif self.assembler == 'canu':
+        elif self.assembler == 'flye':
             if self.contigs_fasta is None or self.contigs_gfa is None:
-                raise Error('Error finding canu contigs fasta and/or gfa file')
+                raise Error('Error finding flye contigs fasta and/or gfa file')
         else:
             raise Error('Assembler "' + self.assembler + '" not recognised. Cannot continue')
 
@@ -183,7 +183,7 @@ class Assembly:
                 return self._circular_contigs_from_spades_after_3_6_1(self.assembly_graph_fastg, self.contigs_paths)
             else:
                 return set()
-        elif self.assembler == 'canu':
+        elif self.assembler == 'flye':
             return self._circular_contigs_from_canu_gfa(self.contigs_gfa)
         else:
             return set()
