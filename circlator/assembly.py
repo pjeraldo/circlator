@@ -38,13 +38,13 @@ class Assembly:
         if self.assembler_dir is None:
             return
 
-        contigs_fasta = os.path.join(self.assembler_dir, 'assembly.fasta')
+        contigs_fasta = os.path.join(self.assembler_dir, 'contigs.fasta')
         self.contigs_fasta = self._file_exists(contigs_fasta)
 
         if self.contigs_fasta is None:
             raise Error('Error finding contigs file: ' + contigs_fasta)
 
-        self.contigs_gfa = self._file_exists(os.path.join(self.assembler_dir, 'assembly_graph.gfa'))
+        self.contigs_gfa = self._file_exists(os.path.join(self.assembler_dir, 'contigs.gfa'))
         self.contigs_fastg = self._file_exists(os.path.join(self.assembler_dir, 'contigs.fastg'))
         self.contigs_paths = self._file_exists(os.path.join(self.assembler_dir, 'contigs.paths'))
         self.assembly_graph_fastg = self._file_exists(os.path.join(self.assembler_dir, 'assembly_graph.fastg'))
