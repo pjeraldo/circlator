@@ -39,7 +39,7 @@ class BamFilter:
 
     def _get_ref_lengths(self):
         '''Gets the length of each reference sequence from the header of the bam. Returns dict name => length'''
-        sam_reader = pysam.Samfile(self.bam, "rb")
+        sam_reader = pysam.AlignmentFile(self.bam, mode="rb")
         return dict(zip(sam_reader.references, sam_reader.lengths))
 
 
@@ -72,14 +72,14 @@ class BamFilter:
 
     def _all_reads_from_contig(self, contig, fout):
         '''Gets all reads from contig called "contig" and writes to fout'''
-        sam_reader = pysam.Samfile(self.bam, "rb")
+        sam_reader = pysam.AlignmentFile(self.bam, mode="rb")
         for read in sam_reader.fetch(contig):
             print(mapping.aligned_read_to_read(read, ignore_quality=not self.fastq_out), file=fout)
 
 
     def _get_all_unmapped_reads(self, fout):
         '''Writes all unmapped reads to fout'''
-        sam_reader = pysam.Samfile(self.bam, "rb")
+        sam_reader = pysam.AlignmentFile(self.bam, mode="rb")
         for read in sam_reader.fetch(until_eof=True):
             if read.is_unmapped:
                 print(mapping.aligned_read_to_read(read, ignore_quality=not self.fastq_out), file=fout)
@@ -87,7 +87,7 @@ class BamFilter:
 
     def _break_reads(self, contig, position, fout, min_read_length=250):
         '''Get all reads from contig, but breaks them all at given position (0-based) in the reference. Writes to fout. Currently pproximate where it breaks (ignores indels in the alignment)'''
-        sam_reader = pysam.Samfile(self.bam, "rb")
+        sam_reader = pysam.AlignmentFile(self.bam, mode="rb")
         for read in sam_reader.fetch(contig):
             seqs = []
             if read.pos < position < read.reference_end - 1:
@@ -111,7 +111,7 @@ class BamFilter:
 
     def _exclude_region(self, contig, start, end, fout):
         '''Writes reads not mapping to the given region of contig, start and end as per python convention'''
-        sam_reader = pysam.Samfile(self.bam, "rb")
+        sam_reader = pysam.AlignmentFile(self.bam, mode="rb")
         exclude_interval = pyfastaq.intervals.Interval(start, end - 1)
         for read in sam_reader.fetch(contig):
             read_interval = pyfastaq.intervals.Interval(read.pos, read.reference_end - 1)
@@ -121,7 +121,7 @@ class BamFilter:
 
     def _get_region(self, contig, start, end, fout, min_length=250):
         '''Writes reads mapping to given region of contig, trimming part of read not in the region'''
-        sam_reader = pysam.Samfile(self.bam, "rb")
+        sam_reader = pysam.AlignmentFile(self.bam, mode="rb")
         trimming_end = (start == 0)
         for read in sam_reader.fetch(contig, start, end):
             read_interval = pyfastaq.intervals.Interval(read.pos, read.reference_end - 1)
@@ -185,7 +185,7 @@ class BamFilter:
                     print(self.log_prefix, contig, ref_lengths[contig], 'all', sep='\t', file=f_log)
                     if self.verbose:
                         print('Getting all reads that map to contig', contig, flush=True)
-                    
+
             else:
                 end_bases_keep = int(0.5 * self.length_cutoff)
                 start = end_bases_keep - 1
