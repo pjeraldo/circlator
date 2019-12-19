@@ -17,7 +17,7 @@ index_extensions = [
 
 def bwa_index(infile, outprefix=None, bwa=None, verbose=False):
     if bwa is None:
-        bwa = external_progs.make_and_check_prog('minimap2', verbose=verbose)
+        bwa = external_progs.make_and_check_prog('bwa', verbose=verbose)
 
     if outprefix is None:
         outprefix = infile
@@ -27,8 +27,8 @@ def bwa_index(infile, outprefix=None, bwa=None, verbose=False):
         return
 
     cmd = ' '.join([
-        bwa.exe(),
-        '-d', outprefix,
+        bwa.exe(),  'index',
+        '-p', outprefix,
         infile
     ])
     common.syscall(cmd, verbose=verbose)
@@ -53,15 +53,14 @@ def bwa_mem(
     ):
 
     samtools = external_progs.make_and_check_prog('samtools', verbose=verbose)
-    bwa = external_progs.make_and_check_prog('minimap2', verbose=verbose)
+    bwa = external_progs.make_and_check_prog('bwa', verbose=verbose)
     unsorted_bam = outfile + '.tmp.unsorted.bam'
-    tmp_index = outfile + '.tmp.minimap2_index'
+    tmp_index = outfile + '.tmp.bwa_index'
     bwa_index(ref, outprefix=tmp_index, verbose=verbose, bwa=bwa)
 
     cmd = ' '.join([
-        bwa.exe(),
-        '-ax', 'map-pb',
-        '--MD',
+        bwa.exe(), 'mem',
+        bwa_options,
         '-t', str(threads),
         tmp_index,
         reads,

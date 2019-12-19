@@ -14,7 +14,7 @@ prog_to_env_var = {
 }
 
 prog_to_version_cmd = {
-    'minimap2': ('--version', re.compile(r'([0-9\.]+)')),
+    'bwa': ('', re.compile(r'^Version: ([0-9\.]+)')),
     'nucmer': ('--version', re.compile(r'([0-9\.]+)')),
     'prodigal': ('-v', re.compile(r'^Prodigal V([0-9\.]+):')),
     'samtools': ('', re.compile(r'Version: (\d+\.\d+[\.\d]*)')),
@@ -23,7 +23,7 @@ prog_to_version_cmd = {
 }
 
 min_versions = {
-    'minimap2': '2.0',
+    'bwa': '0.7.12',
     'nucmer': '3.1',
     'prodigal': '2.6',
     'samtools': '0.1.19',
@@ -38,7 +38,7 @@ bad_versions = {
 
 
 prog_name_to_default = {
-    'minimap2': 'minimap2',
+    'bwa': 'bwa',
     'nucmer': 'nucmer',
     'prodigal': 'prodigal',
     'spades': 'spades.py',
