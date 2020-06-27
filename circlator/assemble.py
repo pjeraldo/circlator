@@ -41,6 +41,9 @@ class Assembler:
             self.canu = external_progs.make_and_check_prog('flye', verbose=self.verbose, required=True)
             self.genomeSize=genomeSize
             self.data_type = data_type
+        elif self.assembler == 'racon':
+            self.racon = external_progs.make_and_check_prog('racon', verbose=self.verbose, required=True)
+            self.data_type = data_type
         else:
             raise Error('Unknown assembler: "' + self.assembler + '". cannot continue')
 
@@ -167,11 +170,119 @@ class Assembler:
         renamed_gfa = os.path.join(self.outdir, 'contigs.gfa')
         os.rename(original_gfa, renamed_gfa)
 
+    def run_racon(self):
+        '''Runs minimap, miniasm, racon instead of spades'''
+
+        if self.data_type.startswith('pacbio'):
+            overlap_reads_type = 'ava-pb' # PacBio
+        else:
+            overlap_reads_type = 'ava-ont' # Nanopore
+
+        # minimap2
+        cmd = [
+            self.minimap2.exe(),
+            '-t', self.threads,
+            '-x', overlap_reads_type, self.reads, self.reads,
+            '>', os.path.join(self.outdir, 'output.paf')
+        ]
+
+        ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
+        if not ok:
+            raise Error('Error running minimap2.')
+
+        # miniasm
+        cmd = [
+            self.miniasm.exe(),
+            '-Rc2', '-f', self.reads, os.path.join(self.outdir, 'output.paf'),
+            '>', os.path.join(self.outdir, 'output.gfa')
+        ]
+
+        ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
+        if not ok:
+            raise Error('Error running miniasm.')
+
+        # gfa2fasta
+        cmd = [
+            self.awk.exe(),
+            '/^S/{print ">"$2"\n"$3}', os.path.join(self.outdir, 'output.gfa'),
+            '|', 'fold ' '>',  os.path.join(self.outdir, 'output.gfa.fasta')
+
+        ]
+
+        ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
+        if not ok:
+            raise Error('Error running awk.')
+
+        if self.data_type.startswith('pacbio'):
+            map_reads_type = 'map-pb' # PacBio
+        else:
+            map_reads_type = 'map-ont' # Nanopore
+
+
+        # Correction 1
+        # minimap2
+        cmd = [
+            self.minimap2.exe(),
+            '-t', self.threads,
+            '-ax', map_reads_type, os.path.join(self.outdir, 'output.gfa.fasta'), self.reads,
+            '>', os.path.join(self.outdir, 'output.gfa1.sam')
+        ]
+
+        ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
+        if not ok:
+            raise Error('Error running minimap2 correction step #1.')
+
+        # Racon 1
+        cmd = [
+            self.racon.exe(),
+            '-t', self.threads, self.reads, os.path.join(self.outdir, 'output.gfa1.sam'),
+            os.path.join(self.outdir, 'output.gfa.fasta'),
+            '>', os.path.join(self.outdir, 'output.racon1.fasta')
+        ]
+
+        ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
+        if not ok:
+            raise Error('Error running racon correction step #1.')
+
+
+        # Correction 2
+        # minimap2 2
+        cmd = [
+            self.minimap2.exe(),
+            '-t', self.threads,
+            '-ax', map_reads_type, os.path.join(self.outdir, 'output.racon1.fasta'), self.reads,
+            '>', os.path.join(self.outdir, 'output.gfa2.sam')
+        ]
+
+        ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
+        if not ok:
+            raise Error('Error running minimap2 correction step #2.')
+
+        # Racon 2
+        cmd = [
+            self.racon.exe(),
+            '-t', self.threads, self.reads, os.path.join(self.outdir, 'output.gfa2.sam'),
+            os.path.join(self.outdir, 'output.racon1.fasta'),
+            '>', os.path.join(self.outdir, 'output.racon2.fasta')
+        ]
+
+        ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
+        if not ok:
+            raise Error('Error running racon correction step #2.')
+
+        original_gfa = os.path.join(self.outdir, 'output.gfa')
+        renamed_gfa = os.path.join(self.outdir, 'contigs.gfa')
+        os.rename(original_gfa, renamed_gfa)
+        original_contigs = os.path.join(self.outdir, 'output.racon2.fasta')
+        renamed_contigs = os.path.join(self.outdir, 'contigs.fasta')
+        os.rename(original_contigs, renamed_contigs)
 
     def run(self):
         if self.assembler == 'spades':
             self.run_spades(stop_at_first_success=self.spades_use_first_success)
         elif self.assembler == 'flye':
             self.run_canu()
+        elif self.assembler == 'racon':
+            self.run_racon()
         else:
             raise Error('Unknown assembler: "' + self.assembler + '". cannot continue')
