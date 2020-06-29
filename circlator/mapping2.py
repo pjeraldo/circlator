@@ -24,7 +24,7 @@ def minimap2(
     minimap2 = external_progs.make_and_check_prog('minimap2', verbose=verbose)
     unsorted_bam = outfile + '.tmp.unsorted.bam'
 
-    if startswith(data_type) == 'pacbio':
+    if data_type.startswith('pacbio'):
         map_reads_type= 'map-pb'
     else:
         map_reads_type= 'map-ont'
