@@ -187,7 +187,7 @@ class Assembler:
             except:
                 print('Error making output directory', self.outdir, file=sys.stderr)
                 sys.exit(1)
-        
+
         # minimap2
         cmd = [
             self.minimap2.exe(),
@@ -195,8 +195,7 @@ class Assembler:
             '-x', overlap_reads_type, self.reads, self.reads,
             '-o', os.path.join(self.outdir, 'output.paf')
         ]
-        #DEBUG
-        print(cmd)
+
         ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
         if not ok:
             raise Error('Error running minimap2.')
@@ -215,7 +214,7 @@ class Assembler:
         # gfa2fasta
         cmd = [
             self.awk.exe(),
-            '/^S/{print ">"$2"\n"$3}', os.path.join(self.outdir, 'output.gfa'),
+            '\'/^S/{print ">"$2"\\n"$3}\'', os.path.join(self.outdir, 'output.gfa'),
             '|', 'fold ' '>',  os.path.join(self.outdir, 'output.gfa.fasta')
 
         ]
