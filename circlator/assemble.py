@@ -184,11 +184,12 @@ class Assembler:
         # minimap2
         cmd = [
             self.minimap2.exe(),
-            '-t', self.threads,
+            '-t', str(self.threads),
             '-x', overlap_reads_type, self.reads, self.reads,
             '>', os.path.join(self.outdir, 'output.paf')
         ]
-
+        #DEBUG
+        print(cmd)
         ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
         if not ok:
             raise Error('Error running minimap2.')
@@ -226,7 +227,7 @@ class Assembler:
         # minimap2
         cmd = [
             self.minimap2.exe(),
-            '-t', self.threads,
+            '-t', str(self.threads),
             '-ax', map_reads_type, os.path.join(self.outdir, 'output.gfa.fasta'), self.reads,
             '>', os.path.join(self.outdir, 'output.gfa1.sam')
         ]
@@ -238,7 +239,7 @@ class Assembler:
         # Racon 1
         cmd = [
             self.racon.exe(),
-            '-t', self.threads, self.reads, os.path.join(self.outdir, 'output.gfa1.sam'),
+            '-t', str(self.threads), self.reads, os.path.join(self.outdir, 'output.gfa1.sam'),
             os.path.join(self.outdir, 'output.gfa.fasta'),
             '>', os.path.join(self.outdir, 'output.racon1.fasta')
         ]
@@ -252,7 +253,7 @@ class Assembler:
         # minimap2 2
         cmd = [
             self.minimap2.exe(),
-            '-t', self.threads,
+            '-t', str(self.threads),
             '-ax', map_reads_type, os.path.join(self.outdir, 'output.racon1.fasta'), self.reads,
             '>', os.path.join(self.outdir, 'output.gfa2.sam')
         ]
@@ -264,7 +265,7 @@ class Assembler:
         # Racon 2
         cmd = [
             self.racon.exe(),
-            '-t', self.threads, self.reads, os.path.join(self.outdir, 'output.gfa2.sam'),
+            '-t', str(self.threads), self.reads, os.path.join(self.outdir, 'output.gfa2.sam'),
             os.path.join(self.outdir, 'output.racon1.fasta'),
             '>', os.path.join(self.outdir, 'output.racon2.fasta')
         ]
