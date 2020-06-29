@@ -125,12 +125,12 @@ def run():
 
     #-------------------------------- mapreads -------------------------------
     print_message('{:_^79}'.format(' Running mapreads '), options)
-    circlator.mapping.bwa_mem(
+    circlator.mapping2.minimap2(
       original_assembly_renamed,
       original_reads,
       bam,
       threads=options.threads,
-      bwa_options=options.bwa_opts,
+      data_type=options.data_type,
       verbose=options.verbose,
     )
 
@@ -283,4 +283,3 @@ def run():
 
     if number_of_input_contigs == final_number_of_contigs and number_circularized == 0:
         sys.exit(options.unchanged_code)
-
