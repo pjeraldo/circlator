@@ -181,6 +181,13 @@ class Assembler:
         else:
             overlap_reads_type = 'ava-ont' # Nanopore
 
+        if not os.path.exists(self.outdir):
+            try:
+                os.mkdir(self.outdir)
+            except:
+                print('Error making output directory', self.outdir, file=sys.stderr)
+                sys.exit(1)
+        
         # minimap2
         cmd = [
             self.minimap2.exe(),
