@@ -54,6 +54,9 @@ prog_name_to_default = {
     'samtools': 'samtools',
     'flye': 'flye',
     'awk': 'awk',
+    'racon': 'racon',
+    'minimap2': 'minimap2',
+    'miniasm': 'miniasm',
 }
 
 not_required = {'spades', 'flye', 'racon'}
