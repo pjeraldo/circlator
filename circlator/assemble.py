@@ -43,6 +43,9 @@ class Assembler:
             self.data_type = data_type
         elif self.assembler == 'racon':
             self.racon = external_progs.make_and_check_prog('racon', verbose=self.verbose, required=True)
+            self.minimap2= external_progs.make_and_check_prog('minimap2', verbose=self.verbose, required=True)
+            self.miniasm= external_progs.make_and_check_prog('miniasm', verbose=self.verbose, required=True)
+            self.awk= external_progs.make_and_check_prog('awk', verbose=self.verbose, required=True)
             self.data_type = data_type
         else:
             raise Error('Unknown assembler: "' + self.assembler + '". cannot continue')
