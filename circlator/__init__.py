@@ -15,6 +15,7 @@ __all__ = [
     'dnaa',
     'external_progs',
     'mapping',
+    'mapping2',
     'merge',
     'minimus2',
     'program',
@@ -24,4 +25,3 @@ __all__ = [
 ]
 
 from circlator import *
-
