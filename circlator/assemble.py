@@ -285,7 +285,8 @@ class Assembler:
         os.rename(original_gfa, renamed_gfa)
         original_contigs = os.path.join(self.outdir, 'output.racon2.fasta')
         renamed_contigs = os.path.join(self.outdir, 'contigs.fasta')
-        os.rename(original_contigs, renamed_contigs)
+        Assembler._rename_canu_contigs(original_contigs, renamed_contigs)
+        #os.rename(original_contigs, renamed_contigs)
 
     def run(self):
         if self.assembler == 'spades':
