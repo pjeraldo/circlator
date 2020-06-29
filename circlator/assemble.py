@@ -186,7 +186,7 @@ class Assembler:
             self.minimap2.exe(),
             '-t', str(self.threads),
             '-x', overlap_reads_type, self.reads, self.reads,
-            '>', os.path.join(self.outdir, 'output.paf')
+            '-o', os.path.join(self.outdir, 'output.paf')
         ]
         #DEBUG
         print(cmd)
@@ -229,7 +229,7 @@ class Assembler:
             self.minimap2.exe(),
             '-t', str(self.threads),
             '-ax', map_reads_type, os.path.join(self.outdir, 'output.gfa.fasta'), self.reads,
-            '>', os.path.join(self.outdir, 'output.gfa1.sam')
+            '-o', os.path.join(self.outdir, 'output.gfa1.sam')
         ]
 
         ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
@@ -255,7 +255,7 @@ class Assembler:
             self.minimap2.exe(),
             '-t', str(self.threads),
             '-ax', map_reads_type, os.path.join(self.outdir, 'output.racon1.fasta'), self.reads,
-            '>', os.path.join(self.outdir, 'output.gfa2.sam')
+            '-o', os.path.join(self.outdir, 'output.gfa2.sam')
         ]
 
         ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
