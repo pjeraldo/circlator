@@ -5,6 +5,7 @@ import subprocess
 class Error (Exception): pass
 
 allowed_assemblers = ['flye', 'spades', 'racon']
+allowed_mappers = ['bwa', 'minimap2']
 allowed_data_types = ['pacbio-raw', 'pacbio-corr', 'nano-raw', 'nano-corr']
 
 def syscall(cmd, allow_fail=False, verbose=False):

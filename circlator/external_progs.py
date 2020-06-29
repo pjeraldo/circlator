@@ -31,7 +31,7 @@ min_versions = {
     'bwa': '0.7.12',
     'nucmer': '3.1',
     'prodigal': '2.6',
-    'samtools': '0.1.19',
+    'samtools': '1.3',
     'spades': '3.6.2', # this is the first version to support python3
     'flye': '2.6',
     'racon': '1.2.1',
