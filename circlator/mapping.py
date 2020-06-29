@@ -66,9 +66,14 @@ def bwa_mem(
         reads,
         '|',
         samtools.exe(), 'view',
-        '-F 0x0800',
+        '-F', '0x0800', #no supplementary alignments
         '-T', ref,
-        '-b',
+        '-u',
+        '-',
+        '|',
+        samtools.exe(), 'view',
+        '-F', '0x0100', #no secondary alignments
+        '-T', ref,
         '-o', unsorted_bam,
         '-',
     ])
