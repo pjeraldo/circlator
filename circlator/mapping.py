@@ -29,7 +29,7 @@ def minimap2(
     else:
         map_reads_type= 'map-ont'
 
-    threads = min(4, threads)
+    samtools_threads = min(4, threads)
     thread_mem = int(2000 / threads)
 
     cmd = ' '.join([
@@ -48,7 +48,7 @@ def minimap2(
         '-',
         '|',
         samtools.exe(), 'sort',
-        '-@', str(threads),
+        '-@', str(samtools_threads),
         '-m', str(thread_mem) + 'M',
         '-o', outfile
 
