@@ -19,15 +19,15 @@ def run():
     parser.add_argument('--threads', type=int, help='Number of threads [%(default)s]', default=1, metavar='INT')
     parser.add_argument('--verbose', action='store_true', help='Be verbose')
     parser.add_argument('--unchanged_code', type=int, help='Code to return when the input assembly is not changed [%(default)s]', default=0, metavar='INT')
-    parser.add_argument('--assembler', choices=circlator.common.allowed_assemblers, help='Assembler to use for reassemblies [%(default)s]', default='spades')
+    parser.add_argument('--assembler', choices=circlator.common.allowed_assemblers, help='Assembler to use for reassemblies [%(default)s]', default='racon')
     parser.add_argument('--split_all_reads', action='store_true', help='By default, reads mapped to shorter contigs are left unchanged. This option splits them into two, broken at the middle of the contig to try to force circularization. May help if the assembler does not detect circular contigs (eg canu)')
-    parser.add_argument('--data_type', choices=circlator.common.allowed_data_types, help='String representing one of the 4 type of data analysed (only used for Canu) [%(default)s]', default='pacbio-corrected')
+    parser.add_argument('--data_type', choices=circlator.common.allowed_data_types, help='String representing one of the 4 type of data analysed (only used for Canu) [%(default)s]', default='pacbio-raw')
     parser.add_argument('assembly', help='Name of original assembly', metavar='assembly.fasta')
     parser.add_argument('reads', help='Name of corrected reads FASTA or FASTQ file', metavar='reads.fasta/q')
     parser.add_argument('outdir', help='Name of output directory (must not already exist)', metavar='output directory')
 
-    mapreads_group = parser.add_argument_group('mapreads options')
-    mapreads_group.add_argument('--bwa_opts', help='BWA options, in quotes [%(default)s]', default='-x pacbio', metavar='STRING')
+    #mapreads_group = parser.add_argument_group('mapreads options')
+    #mapreads_group.add_argument('--bwa_opts', help='BWA options, in quotes [%(default)s]', default='-x pacbio', metavar='STRING')
 
     bam2reads_group = parser.add_argument_group('bam2reads options')
     bam2reads_group.add_argument('--b2r_discard_unmapped', action='store_true', help='Use this to not keep unmapped reads')
@@ -125,7 +125,7 @@ def run():
 
     #-------------------------------- mapreads -------------------------------
     print_message('{:_^79}'.format(' Running mapreads '), options)
-    circlator.mapping2.minimap2(
+    circlator.mapping.minimap2(
       original_assembly_renamed,
       original_reads,
       bam,

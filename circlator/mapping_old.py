@@ -7,55 +7,101 @@ class Error (Exception): pass
 
 
 index_extensions = [
-        'mmi'
+        'amb',
+        'ann',
+        'bwt',
+        'pac',
+        'sa'
 ]
 
-def minimap2(
+
+def bwa_index(infile, outprefix=None, bwa=None, verbose=False):
+    if bwa is None:
+        bwa = external_progs.make_and_check_prog('bwa', verbose=verbose)
+
+    if outprefix is None:
+        outprefix = infile
+
+    missing = [not os.path.exists(outprefix + '.' + x) for x in index_extensions]
+    if True not in missing:
+        return
+
+    cmd = ' '.join([
+        bwa.exe(),  'index',
+        '-p', outprefix,
+        infile
+    ])
+    common.syscall(cmd, verbose=verbose)
+
+
+def bwa_index_clean(prefix):
+    for e in index_extensions:
+        try:
+            os.unlink(prefix + '.' + e)
+        except:
+            pass
+
+
+def bwa_mem(
       ref,
       reads,
       outfile,
       threads=1,
-      data_type = 'pacbio-raw',
+      bwa_options = '-x pacbio',
       verbose=False,
       index=None
     ):
 
     samtools = external_progs.make_and_check_prog('samtools', verbose=verbose)
-    minimap2 = external_progs.make_and_check_prog('minimap2', verbose=verbose)
+    bwa = external_progs.make_and_check_prog('bwa', verbose=verbose)
     unsorted_bam = outfile + '.tmp.unsorted.bam'
-
-    if data_type.startswith('pacbio'):
-        map_reads_type= 'map-pb'
-    else:
-        map_reads_type= 'map-ont'
+    tmp_index = outfile + '.tmp.bwa_index'
+    bwa_index(ref, outprefix=tmp_index, verbose=verbose, bwa=bwa)
 
     cmd = ' '.join([
-        minimap2.exe(),
-        '-a',
-        '-x', map_reads_type,
-        '--MD',
-        '--secondary', 'no',
+        bwa.exe(), 'mem',
+        bwa_options,
         '-t', str(threads),
-        ref,
+        tmp_index,
         reads,
         '|',
         samtools.exe(), 'view',
-        '-F', '0x0900', #no secondary or supplementary alignments
+        '-F', '0x0800', #no supplementary alignments
+        '-T', ref,
+        '-u',
+        '-',
+        '|',
+        samtools.exe(), 'view',
+        '-F', '0x0100', #no secondary alignments
         '-T', ref,
         '-o', unsorted_bam,
         '-',
     ])
 
     common.syscall(cmd, verbose=verbose)
+    bwa_index_clean(tmp_index)
     threads = min(4, threads)
     thread_mem = int(500 / threads)
+
+    # here we have to check for the version of samtools, starting from 1.3 the
+    # -o flag is used for specifying the samtools sort output-file.
+    # Starting from 1.2 you can use the -o flag, but can't have
+    # -o out.bam at the end of the call, so use new style from 1.3 onwards.
+
+    outparam = ''
+
+    if samtools.version_at_least('1.3'):
+        outparam = '-o'
+        samout = outfile
+    else:
+        samout = outfile[:-4]
 
     cmd = ' '.join([
         samtools.exe(), 'sort',
         '-@', str(threads),
         '-m', str(thread_mem) + 'M',
         unsorted_bam,
-        '-o', outfile
+        outparam,samout
     ])
 
     common.syscall(cmd, verbose=verbose)

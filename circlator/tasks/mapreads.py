@@ -14,7 +14,7 @@ def run():
     parser.add_argument('bam', help='Name of output BAM file', metavar='out.bam')
     options = parser.parse_args()
 
-    circlator.mapping2.minimap2(
+    circlator.mapping.minimap2(
       options.ref,
       options.reads,
       options.bam,
