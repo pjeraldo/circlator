@@ -693,10 +693,11 @@ class Merger:
                 self._contigs_dict_to_file(self.original_contigs, genome_fasta)
                 bam = outprefix + '.iter.' + str(iteration) + '.bam'
 
-                circlator.mapping.bwa_mem(
+                circlator.mapping2.minimap2(
                   genome_fasta,
                   reads_to_map,
                   bam,
+                  data_type= self.data_type,
                   threads=self.threads,
                   verbose=self.verbose,
                 )
