@@ -30,7 +30,7 @@ def minimap2(
         map_reads_type= 'map-ont'
 
     samtools_threads = min(4, threads)
-    thread_mem = int(2000 / threads)
+    thread_mem = int(2000 / samtools_threads)
 
     cmd = ' '.join([
         minimap2.exe(),
