@@ -234,7 +234,7 @@ class Assembler:
         cmd = [
             self.minimap2.exe(),
             '-t', str(self.threads),
-            '-ax', map_reads_type, os.path.join(self.outdir, 'output.gfa.fasta'), self.reads,
+            '-ax', map_reads_type, '--secondary', 'no', os.path.join(self.outdir, 'output.gfa.fasta'), self.reads,
             '-o', os.path.join(self.outdir, 'output.gfa1.sam')
         ]
 
@@ -260,7 +260,7 @@ class Assembler:
         cmd = [
             self.minimap2.exe(),
             '-t', str(self.threads),
-            '-ax', map_reads_type, os.path.join(self.outdir, 'output.racon1.fasta'), self.reads,
+            '-ax', map_reads_type, '--secondary', 'no', os.path.join(self.outdir, 'output.racon1.fasta'), self.reads,
             '-o', os.path.join(self.outdir, 'output.gfa2.sam')
         ]
 
