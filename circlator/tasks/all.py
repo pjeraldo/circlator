@@ -165,7 +165,7 @@ def run():
         assembler=options.assembler,
         genomeSize=options.b2r_length_cutoff,
         data_type=options.data_type,
-        racon_rounds=options.racon_rounds,
+        racon_rounds=options.assemble_racon_rounds,
         verbose=options.verbose
     )
     a.run()
