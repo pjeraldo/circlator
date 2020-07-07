@@ -24,7 +24,9 @@ prog_to_version_cmd = {
     'racon': ('--version', re.compile(r'v.?([0-9][0-9\.]+)')),
     'minimap2': ('-V', re.compile(r'([0-9\.]+)')),
     'miniasm': ('-V', re.compile(r'([0-9\.]+)')),
-    'awk': ('-V', re.compile(r'([0-9\.]+)'))
+    'awk': ('-V', re.compile(r'([0-9\.]+)')),
+    'minipolish': ('--version', re.compile(r'v.?([0-9][0-9\.]+)')),
+
 }
 
 min_versions = {
@@ -37,7 +39,8 @@ min_versions = {
     'racon': '1.2.1',
     'minimap2': '2.10',
     'miniasm': '0.2',
-    'awk': '4.0.0'
+    'awk': '4.0.0',
+    'minipolish': '0.1.2',
 }
 
 
@@ -57,6 +60,7 @@ prog_name_to_default = {
     'racon': 'racon',
     'minimap2': 'minimap2',
     'miniasm': 'miniasm',
+    'minipolish': 'minipolish'
 }
 
 not_required = {'spades', 'flye', 'racon'}

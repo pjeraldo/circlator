@@ -40,6 +40,7 @@ def run():
     parser.add_argument('--assemble_spades_use_first', action='store_true', help='Use the first successful SPAdes assembly. Default is to try all kmers and use the assembly with the largest N50')
     parser.add_argument('--assemble_not_careful', action='store_true', help='Do not use the --careful option with SPAdes (used by default)')
     parser.add_argument('--assemble_not_only_assembler', action='store_true', help='Do not use the --assemble-only option with SPAdes (used by default). Important: with this option, the input reads must be in FASTQ format, otherwise SPAdes will crash because it needs quality scores to correct the reads.')
+    parser.add_argument('--assemble_racon_rounds', help= 'Number of racon polishing rounds [%(default)s]', default=2, metavar='INT')
 
     merge_group = parser.add_argument_group('merge options')
     merge_group.add_argument('--merge_diagdiff', type=int, help='Nucmer diagdiff option [%(default)s]', metavar='INT', default=25)
@@ -164,6 +165,7 @@ def run():
         assembler=options.assembler,
         genomeSize=options.b2r_length_cutoff,
         data_type=options.data_type,
+        racon_rounds=options.racon_rounds,
         verbose=options.verbose
     )
     a.run()

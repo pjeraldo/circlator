@@ -11,6 +11,7 @@ def run():
     parser.add_argument('--not_only_assembler', action='store_true', help='Do not use the --assemble-only option with SPAdes (used by default)')
     parser.add_argument('--threads', type=int, help='Number of threads [%(default)s]', default=1, metavar='INT')
     parser.add_argument('--verbose', action='store_true', help='Be verbose')
+    parser.add_argument('--racon_rounds', type=int, help='Number of racon polishing rounds [%(default)s]', default=2, metavar='INT')
     parser.add_argument('--spades_k', help='Comma separated list of kmers to use when running SPAdes. Max kmer is 127 and each kmer should be an odd integer [%(default)s]', default='127,117,107,97,87,77', metavar='k1,k2,k3,...')
     parser.add_argument('--spades_use_first', action='store_true', help='Use the first successful SPAdes assembly. Default is to try all kmers and use the assembly with the largest N50')
     parser.add_argument('--assembler', choices=circlator.common.allowed_assemblers, help='Assembler to use for reassemblies [%(default)s]', default='spades')
@@ -28,6 +29,7 @@ def run():
         spades_kmers=options.spades_k,
         spades_use_first_success=options.spades_use_first,
         assembler=options.assembler,
+        racon_rounds=options.racon_rounds,
         data_type=options.data_type,
         verbose=options.verbose
     )
