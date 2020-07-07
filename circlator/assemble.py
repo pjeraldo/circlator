@@ -232,6 +232,10 @@ class Assembler:
             os.path.join(self.outdir, 'polished.gfa'),
         ]
 
+        errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
+        if not ok:
+            raise Error('Error running minipolish.')
+
         # gfa2fasta
         cmd = [
             self.awk.exe(),
@@ -240,10 +244,10 @@ class Assembler:
 
         ]
 
-        # ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
-        # if not ok:
-        #     raise Error('Error running awk.')
-        #
+        ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
+        if not ok:
+            raise Error('Error running awk.')
+
         #
         # if self.data_type.startswith('pacbio'):
         #     map_reads_type = 'map-pb' # PacBio
