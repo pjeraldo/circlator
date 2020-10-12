@@ -275,7 +275,7 @@ class Assembler:
 
         # Correction 2
         # minimap2 2
-[
+        cmd = [
             self.minimap2.exe(),
             '-t', str(self.threads),
             '-ax', map_reads_type, '--secondary', 'no', os.path.join(self.outdir, 'output.racon1.fasta'), 'renamed_input.fasta',
