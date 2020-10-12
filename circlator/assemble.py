@@ -40,6 +40,7 @@ class Assembler:
             self.only_assembler = only_assembler
         elif self.assembler == 'flye':
             self.canu = external_progs.make_and_check_prog('flye', verbose=self.verbose, required=True)
+            self.seqtk= external_progs.make_and_check_prog('seqtk', verbose=self.verbose, required=True)
             self.genomeSize=genomeSize
             self.data_type = data_type
         elif self.assembler == 'racon':
@@ -165,7 +166,27 @@ class Assembler:
 
     def run_canu(self):
         '''Runs canu instead of spades'''
-        cmd = self._make_canu_command(self.outdir,'canu')
+        cmd = [
+            self.seqtk.exe(),
+            'rename',
+            self.reads,
+            'bam2fasta_',
+            '>',
+            'renamed_input.fasta'
+        ]
+        ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
+        if not ok:
+            raise Error('Error running seqtk.')
+
+        #cmd = self._make_canu_command(self.outdir,'canu')
+        cmd = [
+            self.canu.exe(),
+            '-t', str(self.threads),
+            '-g', str(float(self.genomeSize)/1000000)+'m',
+            '-o', outdir,
+            '--'+self.data_type,
+            'renamed_input.fasta',
+        ]
         ok, errs = common.syscall(cmd, verbose=self.verbose, allow_fail=False)
         if not ok:
             raise Error('Error running flye.')
