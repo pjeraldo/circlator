@@ -298,7 +298,7 @@ class Assembler:
             self.minimap2.exe(),
             '-t', str(self.threads),
             '-ax', map_reads_type, '--secondary', 'no', os.path.join(self.outdir, 'output.racon1.fasta'), self.reads,
-            '|', self.samtools.exe(), 'view', '-F' ,'0x0900', '-', '>', os.path.join(self.outdir, 'output.gfa1.sam')
+            '|', self.samtools.exe(), 'view', '-F' ,'0x0900', '-', '>', os.path.join(self.outdir, 'output.gfa2.sam')
         ]
         ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
         if not ok:
