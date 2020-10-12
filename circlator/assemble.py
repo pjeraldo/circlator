@@ -183,7 +183,7 @@ class Assembler:
             self.canu.exe(),
             '-t', str(self.threads),
             '-g', str(float(self.genomeSize)/1000000)+'m',
-            '-o', outdir,
+            '-o', self.outdir,
             '--'+self.data_type,
             'renamed_input.fasta',
         ]
