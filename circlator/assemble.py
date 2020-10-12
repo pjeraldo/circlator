@@ -228,28 +228,6 @@ class Assembler:
         if not ok:
             raise Error('Error running miniasm.')
 
-
-        # #PJ: minipolish
-        #
-        # polish_reads_type_switch = ''
-        # if self.data_type.startswith('pacbio'):
-        #     polish_reads_type_switch = '--pacbio'
-        #
-        # cmd = [
-        #     self.minipolish.exe(),
-        #     '-t', str(self.threads),
-        #     '--rounds', str(self.racon_rounds), # default 2
-        #     polish_reads_type_switch,
-        #     self.reads,
-        #     os.path.join(self.outdir, 'output.gfa'),
-        #     '>',
-        #     os.path.join(self.outdir, 'polished.gfa'),
-        # ]
-        #
-        # errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
-        # if not ok:
-        #     raise Error('Error running minipolish.')
-        #
         # gfa2fasta
         cmd = [
             self.awk.exe(),
@@ -271,12 +249,7 @@ class Assembler:
 
         # Correction 1
         # minimap2
-        # cmd = [
-        #     self.minimap2.exe(),
-        #     '-t', str(self.threads),
-        #     '-ax', map_reads_type, '--secondary', 'no', os.path.join(self.outdir, 'output.gfa.fasta'), self.reads,
-        #     '-o', os.path.join(self.outdir, 'output.gfa1.sam')
-        # ]
+
         cmd = [
             self.minimap2.exe(),
             '-t', str(self.threads),
@@ -302,13 +275,7 @@ class Assembler:
 
         # Correction 2
         # minimap2 2
-        # cmd = [
-        #     self.minimap2.exe(),
-        #     '-t', str(self.threads),
-        #     '-ax', map_reads_type, '--secondary', 'no', os.path.join(self.outdir, 'output.racon1.fasta'), self.reads,
-        #     '-o', os.path.join(self.outdir, 'output.gfa2.sam')
-        # ]
-        cmd = [
+[
             self.minimap2.exe(),
             '-t', str(self.threads),
             '-ax', map_reads_type, '--secondary', 'no', os.path.join(self.outdir, 'output.racon1.fasta'), 'renamed_input.fasta',
@@ -336,7 +303,6 @@ class Assembler:
         original_contigs = os.path.join(self.outdir, 'output.polished.fasta')
         renamed_contigs = os.path.join(self.outdir, 'contigs.fasta')
         Assembler._rename_canu_contigs(original_contigs, renamed_contigs)
-        #os.rename(original_contigs, renamed_contigs)
 
     def run(self):
         if self.assembler == 'spades':
