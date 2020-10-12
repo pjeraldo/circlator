@@ -280,7 +280,7 @@ class Assembler:
         cmd = [
             self.minimap2.exe(),
             '-t', str(self.threads),
-            '-ax', map_reads_type, '--secondary', 'no', os.path.join(self.outdir, 'output.gfa.fasta'), self.reads,
+            '-ax', map_reads_type, '--secondary', 'no', os.path.join(self.outdir, 'output.gfa.fasta'), 'renamed_input.fasta',
             '|', self.samtools.exe(), 'view', '-F' ,'0x0900', '-', '>', os.path.join(self.outdir, 'output.gfa1.sam')
         ]
         ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
@@ -311,7 +311,7 @@ class Assembler:
         cmd = [
             self.minimap2.exe(),
             '-t', str(self.threads),
-            '-ax', map_reads_type, '--secondary', 'no', os.path.join(self.outdir, 'output.racon1.fasta'), self.reads,
+            '-ax', map_reads_type, '--secondary', 'no', os.path.join(self.outdir, 'output.racon1.fasta'), 'renamed_input.fasta',
             '|', self.samtools.exe(), 'view', '-F' ,'0x0900', '-', '>', os.path.join(self.outdir, 'output.gfa2.sam')
         ]
         ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
