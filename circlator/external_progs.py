@@ -62,7 +62,7 @@ prog_name_to_default = {
     'minimap2': 'minimap2',
     'miniasm': 'miniasm',
     'minipolish': 'minipolish',
-    'seqtk','seqtk',
+    'seqtk':'seqtk',
 }
 
 not_required = {'spades', 'flye', 'racon'}
