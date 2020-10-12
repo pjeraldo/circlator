@@ -47,7 +47,8 @@ class Assembler:
             self.minimap2= external_progs.make_and_check_prog('minimap2', verbose=self.verbose, required=True)
             self.miniasm= external_progs.make_and_check_prog('miniasm', verbose=self.verbose, required=True)
             self.awk= external_progs.make_and_check_prog('awk', verbose=self.verbose, required=True)
-            self.minipolish= external_progs.make_and_check_prog('minipolish', verbose=self.verbose, required=True)
+            self.seqtk= external_progs.make_and_check_prog('seqtk', verbose=self.verbose, required=True)
+            #self.minipolish= external_progs.make_and_check_prog('minipolish', verbose=self.verbose, required=True)
             self.data_type = data_type
             self.racon_rounds= racon_rounds
         else:
@@ -191,11 +192,24 @@ class Assembler:
                 print('Error making output directory', self.outdir, file=sys.stderr)
                 sys.exit(1)
 
-        # minimap2
+        #seqtk rename input reads... reads are good for some reason
+        cmd = [
+            self.seqtk.exe(),
+            'rename',
+            self.reads,
+            'bam2fasta_',
+            '>',
+            'renamed_input.fasta'
+        ]
+        ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
+        if not ok:
+            raise Error('Error running seqtk.')
+
+            # minimap2
         cmd = [
             self.minimap2.exe(),
             '-t', str(self.threads),
-            '-x', overlap_reads_type, self.reads, self.reads,
+            '-x', overlap_reads_type, 'renamed_input.fasta', 'renamed_input.fasta',
             '-o', os.path.join(self.outdir, 'output.paf')
         ]
 
@@ -206,7 +220,7 @@ class Assembler:
         # miniasm
         cmd = [
             self.miniasm.exe(),
-            '-Rc2', '-f', self.reads, os.path.join(self.outdir, 'output.paf'),
+            '-Rc2', '-f', 'renamed_input.fasta', os.path.join(self.outdir, 'output.paf'),
             '>', os.path.join(self.outdir, 'output.gfa')
         ]
 
@@ -276,7 +290,7 @@ class Assembler:
         # Racon 1
         cmd = [
             self.racon.exe(),
-            '-t', str(self.threads), self.reads, os.path.join(self.outdir, 'output.gfa1.sam'),
+            '-t', str(self.threads), 'renamed_input.fasta', os.path.join(self.outdir, 'output.gfa1.sam'),
             os.path.join(self.outdir, 'output.gfa.fasta'),
             '>', os.path.join(self.outdir, 'output.racon1.fasta')
         ]
@@ -307,7 +321,7 @@ class Assembler:
         # Racon 2
         cmd = [
             self.racon.exe(),
-            '-t', str(self.threads), self.reads, os.path.join(self.outdir, 'output.gfa2.sam'),
+            '-t', str(self.threads), 'renamed_input.fasta', os.path.join(self.outdir, 'output.gfa2.sam'),
             os.path.join(self.outdir, 'output.racon1.fasta'),
             '>', os.path.join(self.outdir, 'output.polished.fasta')
         ]
