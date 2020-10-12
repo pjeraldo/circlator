@@ -187,7 +187,7 @@ class Assembler:
             '--'+self.data_type,
             'renamed_input.fasta',
         ]
-        ok, errs = common.syscall(cmd, verbose=self.verbose, allow_fail=False)
+        ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
         if not ok:
             raise Error('Error running flye.')
 
