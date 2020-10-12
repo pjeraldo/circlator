@@ -281,6 +281,7 @@ class Assembler:
             '-ax', map_reads_type, '--secondary', 'no', os.path.join(self.outdir, 'output.racon1.fasta'), 'renamed_input.fasta',
             '|', self.samtools.exe(), 'view', '-F' ,'0x0900', '-', '>', os.path.join(self.outdir, 'output.gfa2.sam')
         ]
+
         ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
         if not ok:
             raise Error('Error running minimap2 correction step #2.')
