@@ -236,17 +236,17 @@ class Assembler:
         # if not ok:
         #     raise Error('Error running minipolish.')
         #
-        # # gfa2fasta
-        # cmd = [
-        #     self.awk.exe(),
-        #     '\'/^S/{print ">"$2"\\n"$3}\'', os.path.join(self.outdir, 'polished.gfa'),
-        #     '|', 'fold ' '>',  os.path.join(self.outdir, 'output.polished.fasta')
-        #
-        # ]
-        #
-        # ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
-        # if not ok:
-        #     raise Error('Error running awk.')
+        # gfa2fasta
+        cmd = [
+            self.awk.exe(),
+            '\'/^S/{print ">"$2"\\n"$3}\'', os.path.join(self.outdir, 'output.gfa'),
+            '|', 'fold ' '>',  os.path.join(self.outdir, 'output.gfa.fasta')
+
+        ]
+
+        ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
+        if not ok:
+            raise Error('Error running awk.')
 
 
         if self.data_type.startswith('pacbio'):
