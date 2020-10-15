@@ -1,4 +1,5 @@
 import os
+import shutil
 import pysam
 import pyfastaq
 from circlator import common, mapping, external_progs
@@ -228,7 +229,9 @@ class BamFilter:
         ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
         if not ok:
             raise Error('Error running seqtk.')
+        
         #PJ: rename back to original output name
+        shutil.copy(self.reads_outfile, self.reads_outfile + '.original.fasta')
         os.replace(self.reads_outfile + '.renamed_input.fasta', self.reads_outfile)
 
         if self.verbose:
