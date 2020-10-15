@@ -201,6 +201,7 @@ def run():
         spades_careful=not options.assemble_not_careful,
         spades_only_assembler=not options.assemble_not_only_assembler,
         assembler=options.assembler,
+        racon_rounds= options.assemble_racon_rounds,
         length_cutoff=options.b2r_length_cutoff,
         split_all_reads=options.split_all_reads,
         data_type=options.data_type,

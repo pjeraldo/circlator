@@ -17,7 +17,7 @@ class Assembler:
       only_assembler=True,
       verbose=False,
       spades_use_first_success=False,
-      assembler='spades',
+      assembler='racon',
       genomeSize=100000, # only matters for Canu if correcting reads (which we're not)
       racon_rounds=2,
       data_type='pacbio-raw',
@@ -172,7 +172,7 @@ class Assembler:
             self.reads,
             'bam2fasta_',
             '>',
-            'renamed_input.fasta'
+            self.reads + '.renamed_input.fasta'
         ]
         ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
         if not ok:
@@ -185,7 +185,7 @@ class Assembler:
             '-g', str(float(self.genomeSize)/1000000)+'m',
             '-o', self.outdir,
             '--'+self.data_type,
-            'renamed_input.fasta',
+            self.reads + '.renamed_input.fasta',
         ]
         ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
         if not ok:
@@ -220,7 +220,7 @@ class Assembler:
             self.reads,
             'bam2fasta_',
             '>',
-            'renamed_input.fasta'
+            self.reads + '.renamed_input.fasta'
         ]
         ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
         if not ok:
@@ -230,7 +230,7 @@ class Assembler:
         cmd = [
             self.minimap2.exe(),
             '-t', str(self.threads),
-            '-x', overlap_reads_type, 'renamed_input.fasta', 'renamed_input.fasta',
+            '-x', overlap_reads_type, self.reads + '.renamed_input.fasta', self.reads + '.renamed_input.fasta',
             '-o', os.path.join(self.outdir, 'output.paf')
         ]
 
@@ -241,7 +241,7 @@ class Assembler:
         # miniasm
         cmd = [
             self.miniasm.exe(),
-            '-Rc2', '-f', 'renamed_input.fasta', os.path.join(self.outdir, 'output.paf'),
+            '-Rc2', '-f', self.reads + '.renamed_input.fasta', os.path.join(self.outdir, 'output.paf'),
             '>', os.path.join(self.outdir, 'output.gfa')
         ]
 
@@ -274,7 +274,7 @@ class Assembler:
         cmd = [
             self.minimap2.exe(),
             '-t', str(self.threads),
-            '-ax', map_reads_type, '--secondary', 'no', os.path.join(self.outdir, 'output.gfa.fasta'), 'renamed_input.fasta',
+            '-ax', map_reads_type, '--secondary', 'no', os.path.join(self.outdir, 'output.gfa.fasta'), self.reads + '.renamed_input.fasta',
             '|', self.samtools.exe(), 'view', '-F' ,'0x0900', '-', '>', os.path.join(self.outdir, 'output.gfa1.sam')
         ]
         ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
@@ -284,7 +284,7 @@ class Assembler:
         # Racon 1
         cmd = [
             self.racon.exe(),
-            '-t', str(self.threads), 'renamed_input.fasta', os.path.join(self.outdir, 'output.gfa1.sam'),
+            '-t', str(self.threads), self.reads + '.renamed_input.fasta', os.path.join(self.outdir, 'output.gfa1.sam'),
             os.path.join(self.outdir, 'output.gfa.fasta'),
             '>', os.path.join(self.outdir, 'output.racon1.fasta')
         ]
@@ -299,7 +299,7 @@ class Assembler:
         cmd = [
             self.minimap2.exe(),
             '-t', str(self.threads),
-            '-ax', map_reads_type, '--secondary', 'no', os.path.join(self.outdir, 'output.racon1.fasta'), 'renamed_input.fasta',
+            '-ax', map_reads_type, '--secondary', 'no', os.path.join(self.outdir, 'output.racon1.fasta'), self.reads + '.renamed_input.fasta',
             '|', self.samtools.exe(), 'view', '-F' ,'0x0900', '-', '>', os.path.join(self.outdir, 'output.gfa2.sam')
         ]
 
@@ -310,7 +310,7 @@ class Assembler:
         # Racon 2
         cmd = [
             self.racon.exe(),
-            '-t', str(self.threads), 'renamed_input.fasta', os.path.join(self.outdir, 'output.gfa2.sam'),
+            '-t', str(self.threads), self.reads + '.renamed_input.fasta', os.path.join(self.outdir, 'output.gfa2.sam'),
             os.path.join(self.outdir, 'output.racon1.fasta'),
             '>', os.path.join(self.outdir, 'output.polished.fasta')
         ]

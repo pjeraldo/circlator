@@ -26,10 +26,11 @@ class Merger:
           spades_use_first_success=False,
           spades_careful=True,
           spades_only_assembler=True,
-          assembler='spades',
+          assembler='racon',
+          racon_rounds=2,
           length_cutoff=100000,
           split_all_reads=False,
-          data_type='pacbio-corrected',
+          data_type='pacbio-raw',
           ref_end_tolerance=15000,
           qry_end_tolerance=1000,
           verbose=False,
@@ -40,6 +41,7 @@ class Merger:
             raise Error('File not found:' + original_assembly)
 
         self.assembler = assembler
+        self.racon_rounds = racon_rounds
         self.original_fasta = original_assembly
         self.reassembly = circlator.assembly.Assembly(reassembly, assembler=self.assembler)
         self.reads = reads
@@ -708,8 +710,8 @@ class Merger:
                 bam_filter.run()
                 assembler_dir = outprefix + '.iter.' + str(iteration) + '.assembly'
                 a = circlator.assemble.Assembler(
-                    reads_prefix + ('.fasta' if self.spades_only_assembler else '.fastq'),
-                    assembler_dir,
+                    reads= reads_prefix + ('.fasta' if self.spades_only_assembler else '.fastq'),
+                    outdir = assembler_dir,
                     threads=self.threads,
                     careful=self.spades_careful,
                     only_assembler=self.spades_only_assembler,
@@ -717,6 +719,7 @@ class Merger:
                     spades_kmers=self.spades_kmers,
                     spades_use_first_success=self.spades_use_first_success,
                     assembler=self.assembler,
+                    racon_rounds=self.racon_rounds,
                     genomeSize=self.length_cutoff,
                     data_type=self.data_type
                 )

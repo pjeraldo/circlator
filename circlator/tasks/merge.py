@@ -19,6 +19,7 @@ def run():
     parser.add_argument('--spades_use_first', action='store_true', help='Use the first successful SPAdes assembly. Default is to try all kmers and use the assembly with the largest N50')
     parser.add_argument('--assembler', choices=circlator.common.allowed_assemblers, help='Assembler to use for reassemblies [%(default)s]', default='spades')
     parser.add_argument('--data_type', choices=circlator.common.allowed_data_types, help='String representing one of the 4 type of data analysed (only used for Canu) [%(default)s]', default='pacbio-raw')
+    parser.add_argument('--racon_rounds', type=int, help='Number of racon polishing rounds [%(default)s]', default=2, metavar='INT')
     parser.add_argument('--b2r_length_cutoff', type=int, help='All reads mapped to contigs shorter than this will be kept [%(default)s]', default=100000, metavar='INT')
     parser.add_argument('--b2r_split_all_reads', action='store_true', help='By default, reads mapped to shorter contigs are left unchanged. This option splits them into two, broken at the middle of the contig to try to force circularization. May help if the assembler does not detect circular contigs (eg canu)')
     parser.add_argument('--ref_end', type=int, help='max distance allowed between nucmer hit and end of input assembly contig [%(default)s]', metavar='INT', default=15000)
@@ -46,6 +47,7 @@ def run():
         spades_kmers=options.spades_k,
         spades_use_first_success=options.spades_use_first,
         assembler=options.assembler,
+        racon_rounds=options.racon_rounds,
         length_cutoff=options.b2r_length_cutoff,
         split_all_reads=options.b2r_split_all_reads,
         data_type=options.data_type,
