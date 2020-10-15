@@ -1,7 +1,7 @@
 import os
 import pysam
 import pyfastaq
-from circlator import common, mapping
+from circlator import common, mapping, external_progs
 
 class Error (Exception): pass
 
@@ -34,6 +34,8 @@ class BamFilter:
         self.min_read_length = min_read_length
         self.verbose = verbose
         self.split_all_reads = split_all_reads
+
+        self.seqtk= external_progs.make_and_check_prog('seqtk', verbose=self.verbose, required=True)
 
 
 
@@ -211,6 +213,23 @@ class BamFilter:
 
         pyfastaq.utils.close(f_fa)
         pyfastaq.utils.close(f_log)
+
+        #PJ: this might be the right location to rename the reads to remove duplicate names.
+        #Should make other renaming logic unnecessary
+
+        cmd = [
+            self.seqtk.exe(),
+            'rename',
+            self.reads_outfile,
+            'bam2fasta_',
+            '>',
+            self.reads_outfile + '.renamed_input.fasta'
+        ]
+        ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
+        if not ok:
+            raise Error('Error running seqtk.')
+        #PJ: rename back to original output name
+        os.replace(self.reads_outfile + '.renamed_input.fasta', self.reads_outfile)
 
         if self.verbose:
             print('Finished getting reads.')
