@@ -166,17 +166,6 @@ class Assembler:
 
     def run_canu(self):
         '''Runs canu instead of spades'''
-        # cmd = [
-        #     self.seqtk.exe(),
-        #     'rename',
-        #     self.reads,
-        #     'bam2fasta_',
-        #     '>',
-        #     self.reads + '.renamed_input.fasta'
-        # ]
-        # ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
-        # if not ok:
-        #     raise Error('Error running seqtk.')
 
         #cmd = self._make_canu_command(self.outdir,'canu')
         cmd = [
@@ -212,19 +201,6 @@ class Assembler:
             except:
                 print('Error making output directory', self.outdir, file=sys.stderr)
                 sys.exit(1)
-
-        # #seqtk rename input reads... reads are good for some reason
-        # cmd = [
-        #     self.seqtk.exe(),
-        #     'rename',
-        #     self.reads,
-        #     'bam2fasta_',
-        #     '>',
-        #     self.reads + '.renamed_input.fasta'
-        # ]
-        # ok, errs = common.syscall(' '.join(cmd), verbose=self.verbose, allow_fail=False)
-        # if not ok:
-        #     raise Error('Error running seqtk.')
 
             # minimap2
         cmd = [

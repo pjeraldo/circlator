@@ -155,8 +155,8 @@ def run():
     #-------------------------------- assemble -------------------------------
     print_message('{:_^79}'.format(' Running assemble '), options)
     a = circlator.assemble.Assembler(
-        filtered_reads,
-        assembly_dir,
+        reads=filtered_reads,
+        outdir=assembly_dir,
         threads=options.threads,
         careful=not options.assemble_not_careful,
         only_assembler=not options.assemble_not_only_assembler,
